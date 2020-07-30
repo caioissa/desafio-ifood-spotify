@@ -1,4 +1,10 @@
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
-sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials())
+class SpotifyInterface():
+    def __init__(self):
+        self.sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials())
+
+    def get_playlist_by_genre(self, genre, length=20):
+        lista = self.sp.recommendations(seed_genres=[genre], limit=length)['tracks']
+        return [e['name'] for e in lista]
