@@ -22,6 +22,9 @@ source setup_keys.sh
 python src/app.py
 ```
 3. Test in your browser!
-`http://127.0.0.1:5000/playlist?cityname={your city name}`
-or
-`http://127.0.0.1:5000/playlist?lat={your lat}&lon={your lon}&length=35`
+```
+http://127.0.0.1:5000/playlist?cityname={your city name}
+```
+```
+http://127.0.0.1:5000/playlist?lat={your latitude}&lon={your longitude}&length=35
+```
