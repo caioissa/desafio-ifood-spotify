@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('./src')
 from api_interface.openweather_interface import OpenweatherInterface
 from api_interface.spotify_interface import SpotifyInterface
