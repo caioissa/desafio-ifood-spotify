@@ -13,7 +13,9 @@ jobs:
       - run:
           name: Run Unit Tests
           command: |
-            pytest
+            pytest --junitxml=test-reports/junit.xml
+      - store_test_results:
+          path: test-reports
 workflows:
   build_test:
     jobs:
