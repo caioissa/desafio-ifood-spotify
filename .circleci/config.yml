@@ -1,49 +1,44 @@
-version: 2.1
+# Copyright 2015, Google, Inc.
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+# this file except in compliance with the License. You may obtain a copy of the
+# License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable
+# law or agreed to in writing, software distributed under the License is distributed
+# on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied. See the License for the specific language governing permissions and
+# limitations under the License.
+
 machine:
   environment:
-    # Set Environment Variable in circleci app
+    # Add app engine sdk to pythonpath for local unit tests.
+    PYTHONPATH: ${PYTHONPATH}:${HOME}/google_appengine
+
+    # Replace this with your project ID
     GCLOUD_PROJECT: ${GCLOUD_PROJECT}
 
 dependencies:
   pre:
-    - curl -o $HOME/google_appengine_1.9.40.zip https://storage.googleapis.com/appengine-sdks/features/google_appengine_1.9.40.zip 
+    # Download App Engine SDK
+    # This is not necessary to deploy, its only necessary  to run local tests importing the App Engine SDK
+    - curl -o $HOME/google_appengine_1.9.40.zip https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.40.zip
     - unzip -q -d $HOME $HOME/google_appengine_1.9.40.zip
     # Retrieve our secrets from the CircleCI environment
-    - echo $CLIENT_SECRET | base64 --decode > ${HOME}/client-secret.json 
-    
-    - pip install --upgrade pip setuptools webapp2 jinja webob
-      # Update gcloud
+    - echo $CLIENT_SECRET | base64 --decode > ${HOME}/client-secret.json
+    # - sed  s/YOUR-API-KEY/$API_KEY/ api_key.py.sample > api_key.py
+    # vendor our dependencies
+    # - mkdir -p lib
+    # - pip install -r requirements.txt -t lib
+
+    - pip install --upgrade pip setuptools webapp2 jinja2 webob
+    # Make sure gcloud is up to date
     - gcloud --quiet components update app
-      # authenticate gcloud
-    - gcloud auth activate-service-account --key-file ${HOME}/client-secret.son 
-      # Replace <your-project-id>
-    - gcloud config set project ${GCLOUD_PROJECT} 
-
-jobs:
-  run_tests:
-    docker:
-      - image: circleci/python:3.7.4
-    steps:
-      - checkout
-      - run:
-          name: Install Python Dependencies
-          command: |
-            echo 'export PATH=~$PATH:~/.local/bin' >> $BASH_ENV && source $BASH_ENV
-            pip install --user -r requirements.txt
-      - run:
-          name: Run Unit Tests
-          command: |
-            pytest --junitxml=test-reports/junit.xml
-      - store_test_results:
-          path: test-reports
-
-workflows:
-  build_test:
-    jobs:
-      - run_tests
+    # authenticate gcloud
+    - gcloud auth activate-service-account --key-file ${HOME}/client-secret.json
+    # Replace <your-project-id>
+    - gcloud config set project ${GCLOUD_PROJECT}
 
 deployment:
-  staging:
-    branch: master
-    command:
-      - gcloud -q app deploy app.yaml --promote --version=1
+    staging:
+        branch: master
+        commands:
+        # deploy to App Engine
+        - gcloud -q app deploy app.yaml --promote --version=1
