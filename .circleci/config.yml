@@ -20,32 +20,31 @@ dependencies:
     - gcloud config set project ${GCLOUD_PROJECT} 
 
 jobs:
-  run_tests:
-    docker:
-      - image: circleci/python:3.7.4
-    steps:
-      - checkout
-      - run:
-          name: Install Python Dependencies
-          command: |
-            echo 'export PATH=~$PATH:~/.local/bin' >> $BASH_ENV && source $BASH_ENV
-            pip install --user -r requirements.txt
-      - run:
-          name: Run Unit Tests
-          command: |
-            pytest --junitxml=test-reports/junit.xml
-      - store_test_results:
-          path: test-reports
-
-  deploy:
-    deployment:
-      staging:
-        branch: master
-        command:
-          - gcloud -q app deploy app.yaml --promote --version=1
+  test:
+    run_tests:
+      docker:
+        - image: circleci/python:3.7.4
+      steps:
+        - checkout
+        - run:
+            name: Install Python Dependencies
+            command: |
+              echo 'export PATH=~$PATH:~/.local/bin' >> $BASH_ENV && source $BASH_ENV
+              pip install --user -r requirements.txt
+        - run:
+            name: Run Unit Tests
+            command: |
+              pytest --junitxml=test-reports/junit.xml
+        - store_test_results:
+            path: test-reports
 
 workflows:
   build_test:
     jobs:
       - run_tests
-      - deploy
+
+deployment:
+  staging:
+    branch: master
+    command:
+      - gcloud -q app deploy app.yaml --promote --version=1
