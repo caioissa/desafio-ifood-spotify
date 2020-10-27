@@ -13,9 +13,10 @@ The api contains a single endpoint '/playlist' which requires either one of thes
 Besides, it also accepts a optional param:
 * `length` - length of recommended list, default = 20 
 ## Usage
-1. To setup Spotify Keys, run:
+1. To setup Spotify Keys, set environment variables:
 ```bash
-source setup_keys.sh
+export SPOTIFY_CLIENT_ID={your_id}
+export SPOTIFY_SECRET={your_secret}
 ```
 2. To run the app:
 ```bash
