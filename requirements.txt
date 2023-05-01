@@ -1,4 +1,4 @@
 requests
 spotipy
-flask==1.1.2
+flask==2.3.2
 pytest==6.0.1
